@@ -1,0 +1,26 @@
+name: Hideout
+options:
+  bundleIdPrefix: com.cannedf0xy
+  deploymentTarget:
+    iOS: "16.0"
+packages:
+  KSPlayer:
+    url: https://github.com/kingslay/KSPlayer.git
+    from: 2.3.0
+targets:
+  Hideout:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: Hideout
+    dependencies:
+      - package: KSPlayer
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.cannedf0xy.hideout
+      INFOPLIST_FILE: Hideout/Info.plist
+      GENERATE_INFOPLIST_KEY_CFBundleDisplayName: "HIDEOUT"
+      CODE_SIGN_IDENTITY: ""
+      CODE_SIGNING_REQUIRED: NO
+      CODE_SIGNING_ALLOWED: NO
+      SWIFT_VERSION: "5.9"

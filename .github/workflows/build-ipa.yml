@@ -1,0 +1,75 @@
+name: Build & Release IPA
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create GitHub Release'
+        required: true
+        type: boolean
+        default: true
+      release_tag:
+        description: 'Release tag (e.g. v1.0.0)'
+        required: false
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build-ipa:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app || true
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Build Archive
+        run: |
+          xcodebuild archive \
+            -project Hideout.xcodeproj \
+            -scheme Hideout \
+            -destination "generic/platform=iOS" \
+            -archivePath build/Hideout.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES
+
+      - name: Package IPA
+        run: |
+          mkdir -p build/Payload
+          cp -r build/Hideout.xcarchive/Products/Applications/Hideout.app build/Payload/
+          cd build
+          zip -qr Hideout.ipa Payload
+          cd ..
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hideout.ipa
+          path: build/Hideout.ipa
+          retention-days: 14
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name || inputs.release_tag }}
+          name: HIDEOUT iOS ${{ github.ref_name || inputs.release_tag }}
+          files: build/Hideout.ipa
+          draft: false
+          prerelease: false
+          generate_release_notes: true

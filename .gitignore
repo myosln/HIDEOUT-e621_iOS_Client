@@ -1,0 +1,30 @@
+# Xcode
+## User settings
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.xcuserstate
+
+## Build generated
+build/
+*.build/
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.tar.gz
+
+## Swift Package Manager
+.build/
+Packages/
+Package.pins
+Package.resolved
+.swiftpm/xcode/package.xcworkspace/
+.swiftpm/configuration/
+
+## macOS
+.DS_Store
+*.swp
+*~
