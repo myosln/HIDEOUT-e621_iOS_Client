@@ -121,7 +121,7 @@ struct KSVideoPlayerView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> IOSVideoPlayerView {
         let playerView = IOSVideoPlayerView()
-        playerView.set(url: url)
+        playerView.set(url: url, options: KSOptions())
         playerView.play()
         return playerView
     }
